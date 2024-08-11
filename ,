@@ -1,42 +1,124 @@
-local UserInputService = game:GetService("UserInputService")
-local TCESPs = {}
-local adorned = false
+-- Update: Made Freecam tp sync with current camera state.
+-- Working On Trident 2024!!!
 
-local function manageESP(action)
-  for _, part in ipairs(workspace:GetDescendants()) do
-    if part:IsA("UnionOperation") and part.Name == "State" and part.Material == Enum.Material.Neon then
-      if action == "add" then
-        local TCESP = Instance.new("BoxHandleAdornment")
-        TCESP.Adornee = part
-        TCESP.AlwaysOnTop = true
-        TCESP.ZIndex = 0
-        TCESP.Size = Vector3.new(2.5, 6.25, 2.5)
-        TCESP.Transparency = 0.3
-        TCESP.Color = BrickColor.new("Royal purple")
-        TCESP.Parent = workspace
-        TCESP.CFrame = CFrame.new(0, -2.2, 0)
-        table.insert(TCESPs, TCESP)
-      elseif action == "remove" then
-        for _, TCESP in ipairs(TCESPs) do
-          TCESP:Destroy()
+-- Services
+local UIS = game:GetService("UserInputService")
+local RS = game:GetService("RunService")
+local Camera = workspace.CurrentCamera
+
+-- Variables
+local keybind_freecam_toggle = Enum.KeyCode.P -- Assign a key to toggle freecam
+local keybind_teleport = Enum.KeyCode.Y
+local speed = 0.9
+local droneCFrame
+local HighlightFolder = Instance.new("Folder", workspace)
+HighlightFolder.Name = "ESPHighlights"
+local freecamEnabled = false -- State variable for toggle
+
+-- Function to create highlight
+local function createHighlight(part)
+    local highlight = Instance.new("Highlight")
+    highlight.Adornee = part
+    highlight.FillTransparency = 0.7
+    highlight.OutlineTransparency = 0.3
+    highlight.FillColor = Color3.fromRGB(75, 0, 130)
+    highlight.OutlineColor = Color3.fromRGB(75, 0, 130)
+    highlight.Parent = HighlightFolder
+    return highlight
+end
+
+-- Function to get nearest adornee to mouse position
+local function getNearestAdornee()
+    local cursorPosition = UIS:GetMouseLocation()
+    local nearestAdornee = nil
+    local smallestDistance = math.huge
+
+    for _, highlight in ipairs(HighlightFolder:GetChildren()) do
+        if highlight:IsA("Highlight") and highlight.Adornee then
+            local adorneePosition, onScreen = Camera:WorldToScreenPoint(highlight.Adornee.Position)
+            if onScreen then
+                local distance = (Vector2.new(adorneePosition.X, adorneePosition.Y) - cursorPosition).Magnitude
+                if distance < smallestDistance then
+                    smallestDistance = distance
+                    nearestAdornee = highlight.Adornee
+                end
+            end
         end
-        TCESPs = {}
-      end
     end
-  end
+
+    return nearestAdornee
 end
 
-local function toggleAdornments()
-  if adorned then
-    manageESP("remove")
-  else
-    manageESP("add")
-  end
-  adorned = not adorned
+-- Function to teleport camera to nearest adornee
+local function teleportToNearestAdornee()
+    local nearestAdornee = getNearestAdornee()
+    if nearestAdornee then
+        Camera.CFrame = nearestAdornee.CFrame
+		droneCFrame = nearestAdornee.CFrame
+    end
 end
 
-UserInputService.InputBegan:Connect(function(input, gameProcessed)
-  if input.KeyCode == Enum.KeyCode.G and not gameProcessed then
-    toggleAdornments()
-  end
+-- Function to update the camera's free movement based on input
+local function updateFreecam()
+    if freecamEnabled then
+        local delta = UIS:GetMouseDelta()
+        droneCFrame = droneCFrame * CFrame.Angles(-math.rad(delta.Y), -math.rad(delta.X), 0)
+
+        local mv = Vector3.new(
+            (UIS:IsKeyDown(Enum.KeyCode.D) and speed or 0) - (UIS:IsKeyDown(Enum.KeyCode.A) and speed or 0),
+            (UIS:IsKeyDown(Enum.KeyCode.Space) and speed or 0) - (UIS:IsKeyDown(Enum.KeyCode.LeftShift) and speed or 0),
+            (UIS:IsKeyDown(Enum.KeyCode.S) and speed or 0) - (UIS:IsKeyDown(Enum.KeyCode.W) and speed or 0)
+        )
+
+        droneCFrame = droneCFrame * CFrame.new(mv)
+        Camera.CFrame = droneCFrame
+    end
+end
+
+-- Toggle function for freecam
+local function toggleFreecam()
+    freecamEnabled = not freecamEnabled
+    if freecamEnabled then
+        -- Sync freecam start position with current camera position
+        droneCFrame = Camera.CFrame
+    else
+        -- Optional: Reset the camera to the player's current position when freecam is disabled
+        local player = game.Players.LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            Camera.CFrame = player.Character.HumanoidRootPart.CFrame
+        end
+    end
+end
+
+-- Connect the toggle function to a key input
+UIS.InputBegan:Connect(function(input, processed)
+    if not processed then
+        if input.KeyCode == keybind_freecam_toggle then
+            toggleFreecam()
+        end
+        if input.KeyCode == keybind_teleport then
+            -- Teleport whether freecam is active or not
+            teleportToNearestAdornee()
+        end
+    end
 end)
+
+RS.RenderStepped:Connect(updateFreecam)
+
+-- Initialization: ESP setup
+local function toggleESP()
+    local neonParts = workspace:GetDescendants()
+    for _, part in ipairs(neonParts) do
+        if part:IsA("UnionOperation") and part.Name == "State" and part.Material == Enum.Material.Neon then
+            createHighlight(part)
+        end
+    end
+
+    workspace.DescendantAdded:Connect(function(part)
+        if part:IsA("UnionOperation") and part.Name == "State" and part.Material == Enum.Material.Neon then
+            createHighlight(part)
+        end
+    end)
+end
+
+toggleESP()  -- Enable ESP by default
