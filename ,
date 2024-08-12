@@ -7,7 +7,7 @@ local RS = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
 
 -- Variables
-local keybind_freecam_toggle = Enum.KeyCode.P -- Assign a key to toggle freecam
+local keybind_freecam_toggle = Enum.KeyCode.K -- Assign a key to toggle freecam
 local keybind_teleport = Enum.KeyCode.Y
 local speed = 0.9
 local droneCFrame
