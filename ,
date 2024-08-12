@@ -21,8 +21,8 @@ local function createHighlight(part)
     highlight.Adornee = part
     highlight.FillTransparency = 0.7
     highlight.OutlineTransparency = 0.3
-    highlight.FillColor = Color3.fromRGB(75, 0, 130)
-    highlight.OutlineColor = Color3.fromRGB(75, 0, 130)
+    highlight.FillColor = Color3.fromRGB(102, 255, 0)
+    highlight.OutlineColor = Color3.fromRGB(102, 255, 0)
     highlight.Parent = HighlightFolder
     return highlight
 end
