@@ -9,7 +9,7 @@ local Camera = workspace.CurrentCamera
 -- Variables
 local keybind_freecam_toggle = Enum.KeyCode.K -- Assign a key to toggle freecam
 local keybind_teleport = Enum.KeyCode.Y
-local speed = 0.9
+local speed = 0.7
 local droneCFrame
 local HighlightFolder = Instance.new("Folder", workspace)
 HighlightFolder.Name = "ESPHighlights"
